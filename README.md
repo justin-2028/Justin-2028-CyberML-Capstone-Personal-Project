@@ -14,6 +14,6 @@ As the instructions necessitate, the following three files are attached: <br />
 3. JOCyberMLFinal.pdf <br />
 
 ### c. Timeline of the Project
-10/10/22 - Start Date <br />
+10/8/22 - Start Date <br />
 10/20/22 - Completion of Rmd and RScript <br />
 10/23/22 - End Date <br />
