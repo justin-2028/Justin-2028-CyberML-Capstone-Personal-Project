@@ -1,7 +1,7 @@
 # Justin-2028-HarvardX-Capstone-Personal-Project
 
 The following dataset has been downloaded from Kaggle: <br />
-https://www.kaggle.com/datasets/sid321axn/malicious-urls-dataset
+https://www.kaggle.com/datasets/xwolf12/malicious-and-benign-websites
 
 ### a. Instructions
 The submission for the choose-your-own project will be three files: a report in the form of both a PDF document and Rmd file and the R script that performs your machine learning task. You must also provide access to your dataset, either through automatic download in your script or inclusion in a GitHub repository.
@@ -15,5 +15,5 @@ As the instructions necessitate, the following three files are attached: <br />
 
 ### c. Timeline of the Project
 10/8/22 - Start Date <br />
-10/20/22 - Completion of Rmd and RScript <br />
-10/23/22 - End Date <br />
+/22 - Completion of Rmd and RScript <br />
+/22 - End Date <br />
