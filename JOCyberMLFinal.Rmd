@@ -1,0 +1,18 @@
+---
+title: "MovieLens Capstone Project"
+author: "Justin "
+date: "/2022"
+output: pdf_document
+---
+
+# Introduction
+
+Our ever-increasing global connectivity and heavy reliance on cloud services has forced humanity to become more technologically dependent than ever before. Approximately 5.25 billion people have access to and use the internet on a daily basis. In fact, from the year 2000 to 2022, the usage of the internet has increased by 1,355%.
+
+Such dependence highlights just how critical it has become for individuals, companies, and nations to boost their cybersecurity. Technology continues to advance at a rate nearly impossible to keep up with, but we must not trail behind in our attempts to understand these developments and apply the lessons learned. The cost of leniency is steep as cyber criminals are finding resounding success in their hacking attempts. To put in perspective, the average cost of a data breach was $4.24 million in 2021, with the average time to identify a breach being 212 days. 
+
+While governments across the globe are allocating more resources to adequately combat cyber crimes, the vast majority of the world do not consider cybersecurity to be a significant issue, let alone a national security threat. In order to emphasize the importance for countries to increase investment in their cybersecurity programs, I have decided to pursue a personal project regarding the classification of benign and malicious URLs.
+
+## Goal of the Project
+
+By utilizing the K-nearest neighbors (KNN) and Random Forest algorithms, the objective of this project is to identify which model most accurately classifies the URLs as malicious or benign. 
