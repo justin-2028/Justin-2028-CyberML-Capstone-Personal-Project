@@ -1,5 +1,5 @@
 #########################################################
-# Cyber ML Capstone Project - Justin
+# Cyber ML Capstone Project - Justin Oh
 # HarvardX Data Science Professional Certificate PH125.9x
 # End Date: 11/20/23
 #########################################################
