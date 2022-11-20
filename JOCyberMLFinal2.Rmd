@@ -1,0 +1,427 @@
+---
+title: "MovieLens Capstone Project"
+author: "Justin "
+date: "/2022"
+output: pdf_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Introduction
+
+Our ever-increasing global connectivity and heavy reliance on cloud services has forced humanity to become more technologically dependent than ever before. Approximately 5.25 billion people have access to and use the internet on a daily basis. In fact, from the year 2000 to 2022, the usage of the internet has increased by 1,355%.
+
+Such dependence highlights just how critical it has become for individuals, companies, and nations to boost their cyber security. Technology continues to advance at a rate nearly impossible to keep up with, but we must not trail behind in our attempts to understand these developments and apply the lessons learned. The cost of leniency is steep as cyber criminals are finding resounding success in their hacking attempts. To put in perspective, the average cost of a data breach was $4.24 million in 2021, with the average time to identify a breach being 212 days. 
+
+While governments across the globe are allocating more resources to adequately combat cyber crimes, the vast majority of the world do not consider cyber security to be a significant issue, let alone a national security threat. In order to emphasize the importance for countries to increase investment in their cyber security programs, I have decided to pursue a personal project regarding the classification of benign and malicious URLs.
+
+## Goal of the Project
+
+By utilizing the Logistic Regression,K-nearest neighbors (KNN) and Random Forest algorithms, the objective of this project is to identify which model most accurately classifies the URLs as malicious or benign. The focus of the work will be on the model which can correctly predict the malicious URLs. Specificity is the metric we'll try to improve as we work through the models. 
+
+
+# Preparing the dataset. 
+
+First of all we'll load all the necessary libraries and data-set. 
+
+```{r,message=F,warning=F}
+# Required packages will install, please allow several minutes to complete.
+
+if(!require(tidyverse)) install.packages("tidyverse", repos = "http://cran.us.r-project.org")
+if(!require(purrr)) install.packages("purrr", repos = "http://cran.us.r-project.org")
+if(!require(caret)) install.packages("caret", repos = "http://cran.us.r-project.org")
+if(!require(Hmisc)) install.packages("Hmisc", repos = "http://cran.us.r-project.org")
+if(!require(forecast)) install.packages("forecast", repos = "http://cran.us.r-project.org")
+if(!require(randomForest)) install.packages("randomForest", repos = "http://cran.us.r-project.org")
+if(!require(class)) install.packages("class", repos = "http://cran.us.r-project.org")
+if(!require(data.table)) install.packages("data.table", repos = "http://cran.us.r-project.org")
+if(!require(psych)) install.packages("psych", repos = "http://cran.us.r-project.org")
+if(!require(readr)) install.packages("readr", repos = "http://cran.us.r-project.org")
+if(!require(dplyr)) install.packages("dplyr", repos = "http://cran.us.r-project.org")
+if(!require(NCmisc)) install.packages("NCmisc", repos = "http://cran.us.r-project.org")
+
+# Packages for graphing and modeling
+library(tidyverse)
+library(purrr)
+library(caret)
+library(Hmisc)
+library(forecast)
+library(randomForest)
+library(class)
+library(data.table)
+# Packages for reading the CSV file:
+library(psych)
+library(readr)
+library(dplyr)
+#Packages for testing what packages are used:
+library(NCmisc)
+
+```
+
+Now'll download the data-set from Github repository and load it into Rstudio: 
+
+```{r,message=F,warning=F}
+# The necessary data-set is able through my Github repository if the following code fails
+download.file("https://raw.githubusercontent.com/justin-2028/Justin-2028-HarvardX-Capstone-Personal-Project/main/kaggleRCdataset.csv", "kaggleRCdataset.csv")
+train = read.csv("kaggleRCdataset.csv", header = TRUE)
+```
+
+We'll move on to first stage of the whole analysis process, data cleaning
+
+# Data Description
+
+URL: it is the anonymous identification of the URL analyzed in the study
+
+URL_LENGTH: it is the number of characters in the URL
+
+NUMBERSPECIALCHARACTERS: it is number of special characters identified in the URL, such as, “/”, “%”, “#”, “&”, “. 
+“, “=”
+
+CHARSET: it is a categorical value and its meaning is the character encoding standard (also called character set).
+
+SERVER: it is a categorical value and its meaning is the operative system of the server got from the packet response.
+
+CONTENT_LENGTH: it represents the content size of the HTTP header.
+
+WHOIS_COUNTRY: it is a categorical variable, its values are the countries we got from the server response (specifically, our script used the API of Whois).
+
+WHOIS_STATEPRO: it is a categorical variable, its values are the states we got from the server response (specifically, our script used the API of Whois).
+
+WHOIS_REGDATE: Whois provides the server registration date, so, this variable has date values with format DD/MM/YYY HH:MM
+
+WHOISUPDATEDDATE: Through the Whois we got the last update date from the server analyzed
+
+TCPCONVERSATIONEXCHANGE: This variable is the number of TCP packets exchanged between the server and our honeypot client
+
+DISTREMOTETCP_PORT: it is the number of the ports detected and different to TCP
+
+REMOTE_IPS: this variable has the total number of IPs connected to the honeypot
+
+APP_BYTES: this is the number of bytes transferred
+
+SOURCEAPPPACKETS: packets sent from the honeypot to the server
+
+REMOTEAPPPACKETS: packets received from the server
+
+APP_PACKETS: this is the total number of IP packets generated during the communication between the honeypot and the server
+
+DNSQUERYTIMES: this is the number of DNS packets generated during the communication between the honeypot and the server
+
+TYPE: this is a categorical variable, its values represent the type of web page analyzed, specifically, 1 is for malicious websites and 0 is for benign websites
+
+
+# Data Cleaning:
+
+Data cleaning is a vital stage of the analysis. It helps us understands the and clean it in order to make it fit for the modelling purposes. Our data also has some issues. It needs to cleaned in order for it to be ready for modelling. 
+There are some issues "WHOIS_COUNTRY" variable which we need to look:
+
+```{r}
+unique(train$WHOIS_COUNTRY)
+```
+
+We can see that WHOIS_COUNTRY has different values for one country and that needs to be corrected.For example: UK is shown as United Kingdom and GB. We need to correct that. 
+
+```{r}
+train$WHOIS_COUNTRY <- as.character(train$WHOIS_COUNTRY)
+train[train$WHOIS_COUNTRY == 'United Kingdom','WHOIS_COUNTRY'] <- "UK"
+train[train$WHOIS_COUNTRY == "[u'GB'; u'UK']",'WHOIS_COUNTRY'] <- "UK"
+train[train$WHOIS_COUNTRY == "GB",'WHOIS_COUNTRY'] <- "UK"
+train[train$WHOIS_COUNTRY == "us",'WHOIS_COUNTRY'] <- "US"
+train[train$WHOIS_COUNTRY == 'ru','WHOIS_COUNTRY'] <- "RU"
+```
+
+Most countries do not seem to have malicious data. This disparity in data can lead to over-fitting in the modelling. We'll have to deal with this issue here by creating a single category for such countries called "Other"
+
+```{r}
+mc <- train[train$Type == 1,'WHOIS_COUNTRY']
+others <- which(!(train$WHOIS_COUNTRY %in% mc))
+train[others,'WHOIS_COUNTRY'] <- "Other"
+train$WHOIS_COUNTRY <- as.factor(train$WHOIS_COUNTRY)
+
+```
+
+
+Now let's look at the values in CHARSET variable: 
+
+```{r}
+unique(train$CHARSET)
+```
+
+
+There is a similar problem in this variable as we saw in the CHARSET Variable: 
+
+```{r}
+train$CHARSET <- as.character(train$CHARSET)
+train[train$CHARSET == 'iso-8859-1',"CHARSET"] <- "ISO-8859-1"
+train[train$CHARSET == 'utf-8',"CHARSET"] <- "UTF-8"
+train[train$CHARSET == 'windows-1251',"CHARSET"] <- "windows-12##"
+train[train$CHARSET == 'windows-1252',"CHARSET"] <- "windows-12##"
+train$CHARSET <- as.factor(train$CHARSET)
+```
+
+For normalization of server variable, The values which do not have any malicious value in the data,
+we'll assign them to other server value.
+
+```{r}
+train$SERVER <- as.character(train$SERVER)
+mserver <- train[train$Type == 1,"SERVER"]
+others <- which(!(train$SERVER %in% mserver))
+train[others,'SERVER'] <- "Other"
+table(train$SERVER == "Other")
+train$SERVER <- as.factor(train$SERVER)
+```
+
+
+Having missing values in the data is a problem. There are many ways to deal with the missing values. First method is to remove the missing values, but if the number of rows having missing values is high, it can result in data loss. Another method to deal with missing values is using the imputations. This method helps when rows for missing values is high enough to not be removed, so you change the missing values to mean of the variable. If the number of rows with missing values is more than 60% or 70% of total number of rows, then imputing the mean or median won't be helpful, it's better to remove that column from the analysis. We'll look at the number of NAs in our data:
+
+```{r}
+colSums(is.na(train))
+```
+
+We can see that there are 812 NAs in the content length variable. This is almost half of the total number of rows. We can remove this as column as imputation won't be helpful in the modelling process and information from this variable is not a lot . There is 1 NA in DNS_QUERY_TIMES which can be solved by imputation:
+
+```{r}
+train$DNS_QUERY_TIMES=impute(train$DNS_QUERY_TIMES, 0)
+train$CONTENT_LENGTH=impute(train$CONTENT_LENGTH, mean)
+```
+
+
+We'll remove the variables which will not be very useful in the modelling process:
+
+```{r}
+train$URL <- NULL     
+train$WHOIS_REGDATE <- NULL
+
+train$CONTENT_LENGTH <- NULL
+```
+
+
+We can change the our response variable to factor variable: 
+
+```{r}
+train$type<- as.factor(train$Type)
+```
+
+# Data Exploration:
+
+The main purpose of exploring the data here is to get a better understanding of the data-set. First of all we'll look at how many rows and columns we have in the data-set: 
+
+```{r}
+dim(train)
+```
+
+We have 1781 rows and 21 variables. 
+Let's look at first few and last few rows of the data set to see how the table looks like: 
+
+```{r}
+head(train, 10)
+tail(train, 10)
+```
+
+Looking at the structure of the data-set is very important as it gives us the understanding of the variables. It's important to make sure the variables have correct class. 
+
+```{r}
+str(train)
+```
+
+Now, let's look at the overall summary of the data-set to see the mean, median and variance for numeric variables.
+
+```{r}
+describe(train)
+```
+
+It's important to look at the relationship of numeric variables to our response variable type: 
+First of all, we'll look at the DNS_QUERY_TIMES variable against type variable: 
+
+```{r}
+ggplot(train, aes(x=as.factor(Type), y=DNS_QUERY_TIMES, fill=as.factor(Type))) + 
+  geom_boxplot() +
+  theme(legend.position="none")+
+  ggtitle("Boxplot of Type by DNS_QUERY_TIMES")+
+  xlab('Type')
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+There seems to be clear difference between distribution of DNS_QUERY_TIMES for Malicious and Benign websites. This suggests that DNS_QUERY_TIMES can be a good predictor
+
+Now we'll look at the relationship for APP_PACKETS variable:
+
+```{r}
+train%>%ggplot(aes(x=as.factor(Type), y=APP_PACKETS, fill=as.factor(Type))) + 
+  geom_boxplot() +
+  theme(legend.position="none")+
+  ggtitle("Boxplot of Type by App Packets")+
+  xlab('Type')+ylab('App Packets')+
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+There are a lot of outliers in this variable and there seems to be no difference between benign and malicious
+URL link for App packets. Our model will explain if this variable can be a good predictor. 
+
+Let's look at the TCP Conversion exchange: 
+
+```{r}
+train%>%ggplot(aes(x=as.factor(Type), y=TCP_CONVERSATION_EXCHANGE, fill=as.factor(Type))) + 
+  geom_boxplot() +
+  theme(legend.position="none")+
+  ggtitle("Boxplot of Type by TCP Conversion Exchange")+
+  xlab('Type')+ylab('TCP Conversion Exchange')+
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+The distribution is similar to the App Packets and there are a lot of outliers in the data-set. 
+Now let's look at the remote IPS variable: 
+
+```{r}
+train%>%ggplot(aes(x=as.factor(Type), y=REMOTE_IPS, fill=as.factor(Type))) + 
+  geom_boxplot() +
+  theme(legend.position="none")+
+  ggtitle("Boxplot of Type by Remote IPS")+
+  xlab('Type')+ylab('Remote IPS')+
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+Remote IPS has similar median for Malicious and Benign websites however interquartile range of Malicious links
+is less than that of Benign URLs. 
+Now, we'll look at the length of URL to see if the distribution of it for our response variable. 
+
+```{r}
+train%>%ggplot(aes(x=as.factor(Type), y=URL_LENGTH, fill=as.factor(Type))) + 
+  geom_boxplot() +
+  theme(legend.position="none")+
+  ggtitle("Boxplot of Type by URL Lendth")+
+  xlab('Type')+ylab('URL Lendth')+
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+The shape of distribution for Malicious and Benign URL of URL length is quite different and this can be a good identifier for type of URL. 
+Finally we'll plot the distribution of all the numeric variables and see if there's a pattern: 
+
+```{r}
+train %>%
+  keep(is.numeric) %>% 
+  gather() %>% 
+  ggplot(aes(value)) +
+  facet_wrap(~ key, scales = "free") +
+  geom_histogram()
+```
+
+It can be seen that most of the variables are skewed to the right and some variables have a spread out distribution. 
+The variables with a spread out distribution can be helpful in prediction. 
+
+# Creating the Test and Train dataset: 
+
+First of all, we'll do the min-max normalization on the data and then create the training and test data-set. Our training data-set will be the 80% of the observations. 
+
+```{r,message=F,warning=F}
+minMax <- function(x) {
+  return ((x - min(x)) / (max(x) - min(x))) }
+
+train.subset <- train[c('URL_LENGTH','NUMBER_SPECIAL_CHARACTERS','TCP_CONVERSATION_EXCHANGE','DIST_REMOTE_TCP_PORT','REMOTE_IPS','APP_BYTES','SOURCE_APP_PACKETS','REMOTE_APP_PACKETS', 'Type')]
+
+train.subset.n <- as.data.frame(lapply(train.subset, minMax))
+head(train.subset.n)
+
+set.seed(123)
+test_index <- sample(1:nrow(train.subset.n),size=nrow(train.subset.n)*0.2,replace = FALSE) #random selection of 20% data.
+
+test.data <- train.subset[test_index,] # 20% will be test data
+train.data <- train.subset[-test_index,] # remaining 80% will be training data
+
+#Creating separate data frame for 'Type' feature which is our target.
+test.data_labels <-train.subset[test_index,9]
+train.data_labels <- train.subset[-test_index,9]
+```
+
+# Modelling and Testing: 
+
+We'll fit the Logistic Regression, KNN and Random forest models on the data and determine the performance of the model. The performance metrics that are important are Accuracy, Specificity and Sensitivity. Specificity tells us that how many Malicious URLs were correctly predicted by the model. That's why this is the most important metric for us. 
+
+## Logistic Regression:
+
+
+Now, we have our data ready for modelling. First of all, we'll use the logistic regression model. Logistic regression is quite simple model which finds the logit function of the probability of response variable using the equation used in linear modelling: 
+$logit(p) = \beta_0 + \beta_i \times X_i + \epsilon_i$
+We'll fit the logistic regression model on our data and predict it on our test data to check the accuracy and specificity of the results. Specificity is an important metric for us as it tells us how many of malicious URLs were correctly predicted by the algorithm. 
+Let's fit the model and check the summary of the results: 
+
+```{r}
+
+glm_model <- glm(Type~.,data = train.data)
+
+#Looking at the summary of the model
+summary(glm_model)
+```
+
+We can see in the results of the model that all of the models are significant as their p-value is less than 0.05 level of significance. AIC of the model is 592 which looks good. Let's test the performance of the model on the test data: 
+
+```{r}
+predictions<- as.factor(ifelse(predict(glm_model, newdata = test.data,type = 'response')>0.5,1,0))
+
+confusionMatrix(predictions,as.factor(test.data_labels))
+```
+
+Our logistic regression model gives us an accuracy of 88.2% which is good but the model is over-fitted on the data as specificity of the model is 2.4% which is very low. No information rate of the model is also very high. The results of the logistic regression model are not great so we'll test other models. 
+
+## KNN: 
+
+KNN model checks all the data and classified based on the similarity in the data. It is a non-parametric, supervised learning model and similar data is classified based on nearest neighbor approach. It categorizes data based on similarity and classifies new cases based on their similarity with available categories. 
+One important parameter in this model is value of K. It represents the number of neighbors for assigning categories. We'll determine the optimal number of k by iterations. 
+Let's fit KNN on our data. We'll run a loop for KNN from 1 to 100 to test value of k and check accuracy at each point. The value of K which gives us highest accuracy will be selected. 
+
+```{r}
+i=1                          # declaration to initiate for loop
+k.optm=1                     # declaration to initiate for loop
+for (i in 1:100){ 
+  knn.mod <-  knn(train=train.data, test=test.data, cl=train.data_labels, k=i)
+  k.optm[i] <- 100 * sum(test.data_labels == knn.mod)/NROW(test.data_labels)
+  k=i  
+  cat(k,'=',k.optm[i],'\n')       # to print % accuracy 
+}
+```
+
+The series shows us accuracy against value of k. 
+
+```{r}
+plot(k.optm, type="b", xlab="K- Value",ylab="Accuracy level")
+```
+
+From the plot and series optimal value of K is 17 as it yields highest accuracy. 
+Now we'll fit the KNN for the K value of 17: 
+
+```{r}
+knn.17 <- knn(train=train.data, test=test.data, cl=train.data_labels, k=17)
+confusionMatrix(knn.17, as.factor(test.data_labels))
+
+```
+
+The accuracy of the model is 91.8 which is better than logistic regression. The specificity of this KNN model is 39% which is better than logistic regression but it's not very good. Now, we'll test our final Random forest model. 
+
+## Random Forest: 
+
+Random forest model uses multiple decision trees to get the classifications. As opposed to decision trees, random forest creates multiple different decision trees and classifies based on the majority of the tree decisions. 
+Let's fit the model and check the variable importance. 
+
+```{r}
+train.data$Type <- as.factor(train.data$Type)
+modelrf <- randomForest(Type ~ ., data=train.data,ntree=1000)
+(varimp.modelrf <- varImp(modelrf))
+```
+
+We can see that URL_LENGTH and NUMBER_SPECIAL_CHARACTERS are the most important variables in this process. Let's test the output of the model on test data: 
+
+```{r}
+test.data$rf.pred <- predict(modelrf, newdata = test.data)
+head(test.data[c("Type","rf.pred")], n=10)
+confusionMatrix(as.factor(test.data$Type),as.factor(test.data$rf.pred))
+```
+
+We can see that output of the random forest model is great on test set. The overall accuracy of the model is 97% and specificity of the model is 94%. This result is great and we'll this model over others. 
+
+
+# Conclusion: 
+
+In this analysis, we got to know that machine learning approaches to prediction of Malicious URLs are very helpful as they can decrease the risk of cyber crime and theft. In our analysis, random forest model was able to secure 94% Malicious URL prediction rate which is very good. Other advanced approaches using neural network can be more accurate in prediction. We saw that length of the URL and number of special characters in a URL are important when it comes to classification. 
+One important future implication is that a model trained on more observation and with advanced machine learning techniques can be deployed in real world situation to avoid the cyber crimes and online theft. 
