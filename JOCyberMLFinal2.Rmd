@@ -22,7 +22,7 @@ While governments across the globe are allocating more resources to adequately c
 By utilizing Logistic Regression, K-nearest neighbors (KNN) and Random Forest algorithms, the objective of this project is to identify which model most accurately classifies the URLs as malicious or benign. Specificity is the metric we'll try to improve as we work through the models. 
 
 
-# Preparing the dataset. 
+# Preparing the Dataset
 
 First, we will load all the necessary libraries and the dataset. 
 
@@ -308,7 +308,7 @@ train %>%
 It can be observed that most of the variables are skewed to the right and some variables have a spread out distribution. 
 The variables with a spread out distribution can be helpful in prediction.
 
-# Creating the Test and Train dataset: 
+# Creating the Test and Train Dataset: 
 
 First of all, we'll do the min-max normalization on the data and then create the training and test dataset. Our training dataset will be 80% of the observations. 
 
