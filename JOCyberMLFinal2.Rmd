@@ -1,7 +1,7 @@
 ---
 title: "Cyber ML Capstone Project - Justin Oh"
 author: "Justin Oh"
-date: "11/20/2023"
+date: "11/21/2023"
 output: pdf_document
 ---
 ```{r setup, include=FALSE}
@@ -19,12 +19,12 @@ While governments across the globe are allocating more resources to adequately c
 
 ## Goal of the Project
 
-By utilizing the Logistic Regression,K-nearest neighbors (KNN) and Random Forest algorithms, the objective of this project is to identify which model most accurately classifies the URLs as malicious or benign. The focus of the work will be on the model which can correctly predict the malicious URLs. Specificity is the metric we'll try to improve as we work through the models. 
+By utilizing Logistic Regression, K-nearest neighbors (KNN) and Random Forest algorithms, the objective of this project is to identify which model most accurately classifies the URLs as malicious or benign. Specificity is the metric we'll try to improve as we work through the models. 
 
 
 # Preparing the dataset. 
 
-First of all we'll load all the necessary libraries and data-set. 
+First, we will load all the necessary libraries and the dataset. 
 
 ```{r,message=F,warning=F}
 # Required packages will install, please allow several minutes to complete.
@@ -60,7 +60,7 @@ library(NCmisc)
 
 ```
 
-Now'll download the data-set from Github repository and load it into Rstudio: 
+Now'll download the data-set from GitHub repository and load it into RStudio: 
 
 ```{r,message=F,warning=F}
 # The necessary data-set is able through my Github repository if the following code fails
@@ -68,7 +68,7 @@ download.file("https://raw.githubusercontent.com/justin-2028/Justin-2028-Harvard
 train = read.csv("kaggleRCdataset.csv", header = TRUE)
 ```
 
-We'll move on to first stage of the whole analysis process, data cleaning
+We'll move on to first stage of the analysis process, which is data cleaning.
 
 # Data Description
 
@@ -114,14 +114,14 @@ TYPE: this is a categorical variable, its values represent the type of web page 
 
 # Data Cleaning:
 
-Data cleaning is a vital stage of the analysis. It helps us understands the and clean it in order to make it fit for the modelling purposes. Our data also has some issues. It needs to cleaned in order for it to be ready for modelling. 
-There are some issues "WHOIS_COUNTRY" variable which we need to look:
+Data cleaning is a vital stage of the analysis. It helps us understands the data and clean it in order to make it fit for our modelling purposes. Our data also has some issues that must be addressed beforehand. Thus, we will clean it to prepare it for modelling. 
+There are some issues with the "WHOIS_COUNTRY" variable which we need to examine:
 
 ```{r}
 unique(train$WHOIS_COUNTRY)
 ```
 
-We can see that WHOIS_COUNTRY has different values for one country and that needs to be corrected.For example: UK is shown as United Kingdom and GB. We need to correct that. 
+We can see that WHOIS_COUNTRY has different values for one country and that has to be corrected. For example: UK is shown as United Kingdom and GB. We need to correct that before moving forward.
 
 ```{r}
 train$WHOIS_COUNTRY <- as.character(train$WHOIS_COUNTRY)
@@ -132,7 +132,7 @@ train[train$WHOIS_COUNTRY == "us",'WHOIS_COUNTRY'] <- "US"
 train[train$WHOIS_COUNTRY == 'ru','WHOIS_COUNTRY'] <- "RU"
 ```
 
-Most countries do not seem to have malicious data. This disparity in data can lead to over-fitting in the modelling. We'll have to deal with this issue here by creating a single category for such countries called "Other"
+Most countries do not seem to have malicious data. This disparity in data can lead to over-fitting in the modelling. We'll have to deal with this issue here by creating a single category for such countries called "Other".
 
 ```{r}
 mc <- train[train$Type == 1,'WHOIS_COUNTRY']
@@ -150,7 +150,7 @@ unique(train$CHARSET)
 ```
 
 
-There is a similar problem in this variable as we saw in the CHARSET Variable: 
+There is a similar problem in this variable as we saw in the WHOIS_COUNTRY variable: 
 
 ```{r}
 train$CHARSET <- as.character(train$CHARSET)
@@ -161,8 +161,7 @@ train[train$CHARSET == 'windows-1252',"CHARSET"] <- "windows-12##"
 train$CHARSET <- as.factor(train$CHARSET)
 ```
 
-For normalization of server variable, The values which do not have any malicious value in the data,
-we'll assign them to other server value.
+For the normalization of the SERVER variable, we will assign the values which do not have any malicious value in the data to the "Other" server value.
 
 ```{r}
 train$SERVER <- as.character(train$SERVER)
@@ -174,13 +173,13 @@ train$SERVER <- as.factor(train$SERVER)
 ```
 
 
-Having missing values in the data is a problem. There are many ways to deal with the missing values. First method is to remove the missing values, but if the number of rows having missing values is high, it can result in data loss. Another method to deal with missing values is using the imputations. This method helps when rows for missing values is high enough to not be removed, so you change the missing values to mean of the variable. If the number of rows with missing values is more than 60% or 70% of total number of rows, then imputing the mean or median won't be helpful, it's better to remove that column from the analysis. We'll look at the number of NAs in our data:
+Having missing values in the data is a problem. There are many ways to deal with the missing values. The first method is to remove the missing values, but if the number of rows having missing values is high, it can result in data loss. Another method to deal with missing values is using imputations. This method helps when rows for missing values is high enough to not be removed, so you change the missing values to the mean of the variable. If the number of rows with missing values is more than 60% or 70% of total number of rows, then imputing the mean or median won't be helpful and it's better to remove that column from the analysis. We'll look at the number of NAs in our data:
 
 ```{r}
 colSums(is.na(train))
 ```
 
-We can see that there are 812 NAs in the content length variable. This is almost half of the total number of rows. We can remove this as column as imputation won't be helpful in the modelling process and information from this variable is not a lot . There is 1 NA in DNS_QUERY_TIMES which can be solved by imputation:
+We can see that there are 812 NAs in the content length variable. This is almost half of the total number of rows. We can remove this column as imputation won't be helpful in the modelling process and information from this variable isn't significant. There is 1 NA in DNS_QUERY_TIMES which can be solved by imputation:
 
 ```{r}
 train$DNS_QUERY_TIMES=impute(train$DNS_QUERY_TIMES, 0)
@@ -188,7 +187,7 @@ train$CONTENT_LENGTH=impute(train$CONTENT_LENGTH, mean)
 ```
 
 
-We'll remove the variables which will not be very useful in the modelling process:
+We'll now remove the variables which will not be useful in the modelling process:
 
 ```{r}
 train$URL <- NULL     
@@ -198,7 +197,7 @@ train$CONTENT_LENGTH <- NULL
 ```
 
 
-We can change the our response variable to factor variable: 
+We can change our response variable to the factor variable: 
 
 ```{r}
 train$type<- as.factor(train$Type)
@@ -206,34 +205,34 @@ train$type<- as.factor(train$Type)
 
 # Data Exploration:
 
-The main purpose of exploring the data here is to get a better understanding of the data-set. First of all we'll look at how many rows and columns we have in the data-set: 
+The main purpose of exploring the data here is to get a better understanding of the dataset. First, we'll look at how many rows and columns we have in the dataset: 
 
 ```{r}
 dim(train)
 ```
 
 We have 1781 rows and 21 variables. 
-Let's look at first few and last few rows of the data set to see how the table looks like: 
+Let's look at the first few and last few rows of the data set to see how the table looks like: 
 
 ```{r}
 head(train, 10)
 tail(train, 10)
 ```
 
-Looking at the structure of the data-set is very important as it gives us the understanding of the variables. It's important to make sure the variables have correct class. 
+Looking at the structure of the dataset is very important as it enables further understanding of the variables. It's important to make sure the variables have the correct classes. 
 
 ```{r}
 str(train)
 ```
 
-Now, let's look at the overall summary of the data-set to see the mean, median and variance for numeric variables.
+Now, let's look at the overall summary of the dataset to see the mean, median and variance for the numeric variables.
 
 ```{r}
 describe(train)
 ```
 
-It's important to look at the relationship of numeric variables to our response variable type: 
-First of all, we'll look at the DNS_QUERY_TIMES variable against type variable: 
+It's important to look at the relationship of numeric variables to our response variable type. 
+First, we'll look at the DNS_QUERY_TIMES variable against type variable: 
 
 ```{r}
 ggplot(train, aes(x=as.factor(Type), y=DNS_QUERY_TIMES, fill=as.factor(Type))) + 
@@ -244,7 +243,7 @@ ggplot(train, aes(x=as.factor(Type), y=DNS_QUERY_TIMES, fill=as.factor(Type))) +
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
-There seems to be clear difference between distribution of DNS_QUERY_TIMES for Malicious and Benign websites. This suggests that DNS_QUERY_TIMES can be a good predictor
+There seems to be clear difference between distribution of DNS_QUERY_TIMES for Malicious and Benign URLs. This suggests that DNS_QUERY_TIMES can be a good predictor.
 
 Now we'll look at the relationship for APP_PACKETS variable:
 
@@ -257,21 +256,20 @@ train%>%ggplot(aes(x=as.factor(Type), y=APP_PACKETS, fill=as.factor(Type))) +
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
-There are a lot of outliers in this variable and there seems to be no difference between benign and malicious
-URL link for App packets. Our model will explain if this variable can be a good predictor. 
+There are a lot of outliers in this variable and there seems to be no difference between malicious and benign URLs for the APP_PACKETS variable. Our model will explain if this variable has potential to be a good predictor.
 
-Let's look at the TCP Conversion exchange: 
+Let's look at the TCP_CONVERSATION_EXCHANGE variable: 
 
 ```{r}
 train%>%ggplot(aes(x=as.factor(Type), y=TCP_CONVERSATION_EXCHANGE, fill=as.factor(Type))) + 
   geom_boxplot() +
   theme(legend.position="none")+
-  ggtitle("Boxplot of Type by TCP Conversion Exchange")+
-  xlab('Type')+ylab('TCP Conversion Exchange')+
+  ggtitle("Boxplot of Type by TCP Conversation Exchange")+
+  xlab('Type')+ylab('TCP Conversation Exchange')+
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
-The distribution is similar to the App Packets and there are a lot of outliers in the data-set. 
+The distribution is similar to the App Packets and there are a lot of outliers in the dataset. 
 Now let's look at the remote IPS variable: 
 
 ```{r}
@@ -283,21 +281,20 @@ train%>%ggplot(aes(x=as.factor(Type), y=REMOTE_IPS, fill=as.factor(Type))) +
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
-Remote IPS has similar median for Malicious and Benign websites however interquartile range of Malicious links
-is less than that of Benign URLs. 
-Now, we'll look at the length of URL to see if the distribution of it for our response variable. 
+Remote IPS has a similar median for Malicious and Benign URLs. However, the interquartile range of Malicious links is less than that of Benign URLs. 
+Now, we'll look at the length of the URLs to see the distribution of it for our response variable.
 
 ```{r}
 train%>%ggplot(aes(x=as.factor(Type), y=URL_LENGTH, fill=as.factor(Type))) + 
   geom_boxplot() +
   theme(legend.position="none")+
-  ggtitle("Boxplot of Type by URL Lendth")+
-  xlab('Type')+ylab('URL Lendth')+
+  ggtitle("Boxplot of Type by URL Length")+
+  xlab('Type')+ylab('URL Length')+
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
-The shape of distribution for Malicious and Benign URL of URL length is quite different and this can be a good identifier for type of URL. 
-Finally we'll plot the distribution of all the numeric variables and see if there's a pattern: 
+The shape of the distribution for Malicious and Benign URLs of URL length is quite different, so this can be a good identifier for the type of URL. 
+Finally, we'll plot the distribution of all the numeric variables and see if there's a pattern: 
 
 ```{r}
 train %>%
@@ -308,12 +305,12 @@ train %>%
   geom_histogram()
 ```
 
-It can be seen that most of the variables are skewed to the right and some variables have a spread out distribution. 
-The variables with a spread out distribution can be helpful in prediction. 
+It can be observed that most of the variables are skewed to the right and some variables have a spread out distribution. 
+The variables with a spread out distribution can be helpful in prediction.
 
 # Creating the Test and Train dataset: 
 
-First of all, we'll do the min-max normalization on the data and then create the training and test data-set. Our training data-set will be the 80% of the observations. 
+First of all, we'll do the min-max normalization on the data and then create the training and test dataset. Our training dataset will be 80% of the observations. 
 
 ```{r,message=F,warning=F}
 minMax <- function(x) {
@@ -330,21 +327,21 @@ test_index <- sample(1:nrow(train.subset.n),size=nrow(train.subset.n)*0.2,replac
 test.data <- train.subset[test_index,] # 20% will be test data
 train.data <- train.subset[-test_index,] # remaining 80% will be training data
 
-#Creating separate data frame for 'Type' feature which is our target.
+#Creating separate data frame for the 'Type' feature which is our target.
 test.data_labels <-train.subset[test_index,9]
 train.data_labels <- train.subset[-test_index,9]
 ```
 
 # Modelling and Testing: 
 
-We'll fit the Logistic Regression, KNN and Random forest models on the data and determine the performance of the model. The performance metrics that are important are Accuracy, Specificity and Sensitivity. Specificity tells us that how many Malicious URLs were correctly predicted by the model. That's why this is the most important metric for us. 
+We'll fit the Logistic Regression, KNN and Random forest models on the data and determine the performance of the models. The performance metrics that are important are Accuracy, Specificity and Sensitivity. Specificity tells us that how many Malicious URLs were correctly predicted by the model. That's why this is the most important metric for us as mentioned in the Introduction section.
 
 ## Logistic Regression:
 
 
-Now, we have our data ready for modelling. First of all, we'll use the logistic regression model. Logistic regression is quite simple model which finds the logit function of the probability of response variable using the equation used in linear modelling: 
+Now, we have our data ready for modelling. First, we'll use the logistic regression model. Logistic regression is quite a simple model which finds the logit function of the probability of the response variable using the equation used in linear modelling: 
 $logit(p) = \beta_0 + \beta_i \times X_i + \epsilon_i$
-We'll fit the logistic regression model on our data and predict it on our test data to check the accuracy and specificity of the results. Specificity is an important metric for us as it tells us how many of malicious URLs were correctly predicted by the algorithm. 
+We'll fit the logistic regression model on our data and predict it through our test data to check the accuracy and specificity of the results. Specificity is an important metric for us as it tells us how many of malicious URLs were correctly predicted by the algorithm. 
 Let's fit the model and check the summary of the results: 
 
 ```{r}
@@ -355,7 +352,7 @@ glm_model <- glm(Type~.,data = train.data)
 summary(glm_model)
 ```
 
-We can see in the results of the model that all of the models are significant as their p-value is less than 0.05 level of significance. AIC of the model is 592 which looks good. Let's test the performance of the model on the test data: 
+We can see in the results of the model that all of the models are significant as their p-value is less than 0.05 level of significance. The AIC of the model is 592, which looks good for our purposes. Let's test the performance of the model on the test data: 
 
 ```{r}
 predictions<- as.factor(ifelse(predict(glm_model, newdata = test.data,type = 'response')>0.5,1,0))
@@ -363,13 +360,13 @@ predictions<- as.factor(ifelse(predict(glm_model, newdata = test.data,type = 're
 confusionMatrix(predictions,as.factor(test.data_labels))
 ```
 
-Our logistic regression model gives us an accuracy of 88.2% which is good but the model is over-fitted on the data as specificity of the model is 2.4% which is very low. No information rate of the model is also very high. The results of the logistic regression model are not great so we'll test other models. 
+Our logistic regression model gives us an accuracy of 88.2%, which isn't bad. However, we can see that the model is over-fitted on the data because the specificity of the model is very low (2.4%). The no information rate of the model is also very high. The results of the logistic regression model are not what we are looking for, so we'll test other models to achieve a higher accuracy.
 
 ## KNN: 
 
-KNN model checks all the data and classified based on the similarity in the data. It is a non-parametric, supervised learning model and similar data is classified based on nearest neighbor approach. It categorizes data based on similarity and classifies new cases based on their similarity with available categories. 
-One important parameter in this model is value of K. It represents the number of neighbors for assigning categories. We'll determine the optimal number of k by iterations. 
-Let's fit KNN on our data. We'll run a loop for KNN from 1 to 100 to test value of k and check accuracy at each point. The value of K which gives us highest accuracy will be selected. 
+The KNN model checks all the data and classifies based on the similarity in the data. It is a non-parametric, supervised learning model and similar data is classified based on the nearest neighbor approach. It categorizes data based on similarity and classifies new cases based on their similarity with available categories. 
+One important parameter in this model is the value of K. It represents the number of neighbors for assigning categories. We'll determine the optimal number of K through iterations. 
+Let's fit KNN onto our data. We'll run a loop for KNN from 1 to 100 to test value of K and check accuracy at each point. The value of K which gives us highest accuracy will be selected. 
 
 ```{r}
 i=1                          # declaration to initiate for loop
@@ -382,13 +379,13 @@ for (i in 1:100){
 }
 ```
 
-The series shows us accuracy against value of k. 
+The series shows us the accuracy against value of K. 
 
 ```{r}
 plot(k.optm, type="b", xlab="K- Value",ylab="Accuracy level")
 ```
 
-From the plot and series optimal value of K is 17 as it yields highest accuracy. 
+As we can see from the plot and series, the optimal value of K is 17 as it yields the highest accuracy. 
 Now we'll fit the KNN for the K value of 17: 
 
 ```{r}
@@ -397,11 +394,11 @@ confusionMatrix(knn.17, as.factor(test.data_labels))
 
 ```
 
-The accuracy of the model is 91.8 which is better than logistic regression. The specificity of this KNN model is 39% which is better than logistic regression but it's not very good. Now, we'll test our final Random forest model. 
+The accuracy of the model is 91.8 which is better than our previous model (logistic regression). The specificity of this KNN model is 39%, which is far better than logistic regression but it's still not what we are looking for. Now, we'll test our final model, Random Forest.
 
 ## Random Forest: 
 
-Random forest model uses multiple decision trees to get the classifications. As opposed to decision trees, random forest creates multiple different decision trees and classifies based on the majority of the tree decisions. 
+The Random Forest model uses multiple decision trees to determine classifications. Random Forest classifies based on the general consensus provided from the decision trees involved.
 Let's fit the model and check the variable importance. 
 
 ```{r}
@@ -418,14 +415,14 @@ head(test.data[c("Type","rf.pred")], n=10)
 confusionMatrix(as.factor(test.data$Type),as.factor(test.data$rf.pred))
 ```
 
-We can see that output of the random forest model is great on test set. The overall accuracy of the model is 97% and specificity of the model is 94%. This result is great and we'll use this model over others. 
+We can see that output of the Random Forest model is great on the test set. The overall accuracy of the model is 97% and specificity of the model is 94%. This result is great for our purposes and we'll use this model over the others. 
 
 
 # Conclusion
 
-Through this analysis, we were able to confirm that machine learning approaches to the prediction of Malicious URLs are helpful as they can decrease the risk of cyber crime and theft. In our analysis, random forest model was able to secure a 94% Malicious URL prediction rate, which serves as a testament. Other advanced approaches using neural network can be more accurate in prediction. We saw that length of the URL and number of special characters in a URL are important when it comes to classification. 
+Through this analysis, we were able to confirm that machine learning approaches regarding the prediction of Malicious and Benign URLs can be extremely helpful as they can decrease the risk of cyber crime and theft when applied successfully. In our analysis, the Random Forest model was able to secure a 94% Malicious URL prediction rate, which serves as a testament to the usefulness of such algorithms. Other advanced approaches (ex. neural network) can be more accurate in prediction. We saw that length of the URL and number of special characters in a URL are the most important when it comes to classification.
 
-One important future implication is that a model trained on more observation and with advanced machine learning techniques can be deployed in real world situation to avoid the cyber crimes and online theft. 
+One important future implication is that a model trained through more detailed observations and with more advanced machine learning techniques can be deployed in real world situation. When considering the high prediction rates demonstrated by the models as a whole, their helpfulness becomes apparent, particularly in the cybersecurity sector.
 
 While there is clear room for improvement, the algorithms used in this analysis found immense success in differentiating between Malicious and Benign URLs. Furthermore, we were able to determine that the Random Forest model produced the best results, making this venture an overall success.
 
@@ -441,7 +438,7 @@ My Cyber ML Capstone Project encountered several limitations that I hope to addr
 
 As summarized above, my attempts at creating better models has been hampered by the limitations of my device and my understanding of the Malicious and Benign URLs dataset. However, I intend on trying the following in the near future.
 
-1) Applying gradient boosting (through XGBoost) for regression purposes.
+1) Applying gradient boosting (through XGBoost) for regression purposes. As mentioned before, neural networks could be incorporated as well.
 2) Redoing the project with a dataset with a much larger sample size. Could consider either broadening or narrowing the subject matter if necessary. 
 
 ## Acknowledgements
