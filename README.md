@@ -1,4 +1,4 @@
-# Justin-2028-HarvardX-Capstone-Personal-Project
+# Justin-2028-CyberML-Capstone-Personal-Project
 
 The following dataset has been downloaded from Kaggle: <br />
 https://www.kaggle.com/datasets/xwolf12/malicious-and-benign-websites
