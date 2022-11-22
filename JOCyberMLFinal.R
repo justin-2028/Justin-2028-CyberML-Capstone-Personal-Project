@@ -48,12 +48,12 @@ lapply(packageload, library, character.only = TRUE)
 
 # Finding the functions in which the packages listed are used. Please ignore the absolute path featured as this code is used only for my own reference.
 
-  # used.functions <- NCmisc::list.functions.in.file(filename = "C:/Users/124Oh/Downloads/JOCyberMLFinal.R", alphabetic = FALSE) |> print()
+# used.functions <- NCmisc::list.functions.in.file(filename = "C:/Users/124Oh/Downloads/JOCyberMLFinal.R", alphabetic = FALSE) |> print()
 
 # Finding what packages are unused entirely.
 
-  # used.packages <- used.functions |> names() |> grep(pattern = "packages:", value = TRUE) |> gsub(pattern = "package:", replacement = "") |> print()
-  # unused.packages <- packageload[!(packageload %in% used.packages)] |> print()
+# used.packages <- used.functions |> names() |> grep(pattern = "packages:", value = TRUE) |> gsub(pattern = "package:", replacement = "") |> print()
+# unused.packages <- packageload[!(packageload %in% used.packages)] |> print()
 
 
 ######################################
@@ -262,7 +262,6 @@ plot(k.optm, type="b", xlab="K- Value",ylab="Accuracy level")
 
 # Fitting the KNN model for the value of K = 17.
 knn.17 <- knn(train=train.data, test=test.data, cl=train.data_labels, k=17)
-accuracy.17 <- 100 * sum(test.data_labels == knn.17)/NROW(test.data_labels)
 confusionMatrix(knn.17, as.factor(test.data_labels))
 
 #
