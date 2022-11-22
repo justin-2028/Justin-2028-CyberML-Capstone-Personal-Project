@@ -69,22 +69,25 @@ train = read.csv("kaggleRCdataset.csv", header = TRUE)
 # Data Cleaning
 ######################################
 
-unique(df$WHOIS_COUNTRY)
+# Analyzing the WHOIS_COUNTRY variable for potential issues.
+unique(train$WHOIS_COUNTRY)
 
 # We can see that WHOIS_COUNTRY has different values for one country and that has to be corrected. For example: UK is shown as United Kingdom and GB. We need to correct that before moving forward.
 
 
-train$WHOIS_COUNTRY <- as.character(df$WHOIS_COUNTRY)
+train$WHOIS_COUNTRY <- as.character(train$WHOIS_COUNTRY)
 train[train$WHOIS_COUNTRY == 'United Kingdom','WHOIS_COUNTRY'] <- "UK"
 train[train$WHOIS_COUNTRY == "[u'GB'; u'UK']",'WHOIS_COUNTRY'] <- "UK"
 train[train$WHOIS_COUNTRY == "GB",'WHOIS_COUNTRY'] <- "UK"
 train[train$WHOIS_COUNTRY == "us",'WHOIS_COUNTRY'] <- "US"
 train[train$WHOIS_COUNTRY == 'ru','WHOIS_COUNTRY'] <- "RU"
 train$WHOIS_COUNTRY <- as.character(train$WHOIS_COUNTRY)
+
 # Most countries don't seem to have any malicious data 
-# this didn't seem to improve classification but might help performance by reducing dimensionality
+# This didn't seem to improve classification but might help performance by reducing dimensionality
 # This could be overfitting/leakage but fine for current purposes
-# w/ no validation or test sets that shouldn't matter much
+# W/ no validation or test sets that shouldn't matter much
+
 mc <- train[train$Type == 1,'WHOIS_COUNTRY']
 others <- which(!(train$WHOIS_COUNTRY %in% mc))
 train[others,'WHOIS_COUNTRY'] <- "Other"
