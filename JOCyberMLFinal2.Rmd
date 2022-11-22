@@ -417,6 +417,13 @@ confusionMatrix(as.factor(test.data$Type),as.factor(test.data$rf.pred))
 
 We can see that output of the Random Forest model is great on the test set. The overall accuracy of the model is 97% and specificity of the model is 94%. This result is great for our purposes and we'll use this model over the others. 
 
+# Results
+
+Over the course of this report, Logistic Regression, K-nearest neighbors (KNN) and Random Forest algorithms were utilized to find the model that best predicted whether a URL was malicious or benign. 
+
+We achieved a notable increase in accuracy from 88.2% to 97.47%, and an incredible jump in specificity from 2.4% to approximately 94%, with Logistic Regression being the former and Random Forests the latter. 
+
+Having accomplished both the highest accuracy and specificity amongst the three models, it is evident that the Random Forest algorithm is the best predictor of malicious or benign URLs. 
 
 # Conclusion
 
