@@ -418,10 +418,32 @@ head(test.data[c("Type","rf.pred")], n=10)
 confusionMatrix(as.factor(test.data$Type),as.factor(test.data$rf.pred))
 ```
 
-We can see that output of the random forest model is great on test set. The overall accuracy of the model is 97% and specificity of the model is 94%. This result is great and we'll this model over others. 
+We can see that output of the random forest model is great on test set. The overall accuracy of the model is 97% and specificity of the model is 94%. This result is great and we'll use this model over others. 
 
 
-# Conclusion: 
+# Conclusion
 
-In this analysis, we got to know that machine learning approaches to prediction of Malicious URLs are very helpful as they can decrease the risk of cyber crime and theft. In our analysis, random forest model was able to secure 94% Malicious URL prediction rate which is very good. Other advanced approaches using neural network can be more accurate in prediction. We saw that length of the URL and number of special characters in a URL are important when it comes to classification. 
+Through this analysis, we were able to confirm that machine learning approaches to the prediction of Malicious URLs are helpful as they can decrease the risk of cyber crime and theft. In our analysis, random forest model was able to secure a 94% Malicious URL prediction rate, which serves as a testament. Other advanced approaches using neural network can be more accurate in prediction. We saw that length of the URL and number of special characters in a URL are important when it comes to classification. 
+
 One important future implication is that a model trained on more observation and with advanced machine learning techniques can be deployed in real world situation to avoid the cyber crimes and online theft. 
+
+While there is clear room for improvement, the algorithms used in this analysis found immense success in differentiating between Malicious and Benign URLs. Furthermore, we were able to determine that the Random Forest model produced the best results, making this venture an overall success.
+
+## Limitations
+
+My Cyber ML Capstone Project encountered several limitations that I hope to address in the future, perhaps through the assistance of my peer reviewers and the feedback of the staff.
+
+1) Software/Hardware Limitations: I have attempted several advanced machine learning models that could have outbested the Random Forest models, such as a potential incorporation of the cforest package, but the lackluster processing power and RAM of my laptop has currently made it difficult to do so.
+2) Exploratory Limitations: A higher understanding of the Malicious and Benign URLs dataset would have allowed me to fine-tune the models further. I had much difficulty with the data wrangling portion of the project, so I hope to improve that in future endeavors.
+3) Dataset Limitations: The Malicious and Benign URLs dataset contains only 1781 unique URLs. The small sample size undoubtedly limited the performance of our models. However, other datasets on Kaggle either faced the same predicament or lacked the variables I was looking for. I will continue to search for a higher-quality dataset so I can revisit and improve this project.
+
+## Future Works
+
+As summarized above, my attempts at creating better models has been hampered by the limitations of my device and my understanding of the Malicious and Benign URLs dataset. However, I intend on trying the following in the near future.
+
+1) Applying gradient boosting (through XGBoost) for regression purposes.
+2) Redoing the project with a dataset with a much larger sample size. Could consider either broadening or narrowing the subject matter if necessary. 
+
+## Acknowledgements
+
+I would like to thank Professor Rafael Irizarry, as well as the countless educators, moderators, and supervisors that have contributed to the HarvardX Professional Data Science Certificate Program. Their collective efforts have provided one of the best remote learning experiences I have had to date, and I am extremely grateful to have studied the R programming language under such accredited curriculum. I would like to thank Christian Urcuquii for generously providing the Malicious and Benign URLs dataset on Kaggle for public use. I also want to share my gratitude and heartfelt thanks to my fellow peers, whose discussions on the interactive forums have given me invaluable insight throughout the journey. Lastly, I would like to acknowledge my parents, who have never stopped supporting my dreams.
