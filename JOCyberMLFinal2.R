@@ -4,10 +4,6 @@
 # End Date: 11/22/22
 #########################################################
 
-################################################################################
-# 1. INTRODUCTION
-################################################################################
-
 ######################################
 # Preparing for the Dataset
 ######################################
@@ -61,10 +57,10 @@
 
 
 ######################################
-# Loading the dataset
+# Loading the Dataset
 ######################################
 
-# The necessary dataset is able through my Github repository if the following code fails.
+# The necessary dataset is able through my GitHub repository if the following code fails.
 download.file("https://raw.githubusercontent.com/justin-2028/Justin-2028-HarvardX-Capstone-Personal-Project/main/kaggleRCdataset.csv", "kaggleRCdataset.csv")
 train = read.csv("kaggleRCdataset.csv", header = TRUE)
 
