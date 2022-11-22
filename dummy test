@@ -48,12 +48,12 @@ lapply(packageload, library, character.only = TRUE)
 
 # Finding the functions in which the packages listed are used. Please ignore the absolute path featured as this code is used only for my own reference.
 
-used.functions <- NCmisc::list.functions.in.file(filename = "C:/Users/124Oh/Downloads/JOCyberMLFinal.R", alphabetic = FALSE) |> print()
+  # used.functions <- NCmisc::list.functions.in.file(filename = "C:/Users/124Oh/Downloads/JOCyberMLFinal.R", alphabetic = FALSE) |> print()
 
 # Finding what packages are unused entirely.
 
-used.packages <- used.functions |> names() |> grep(pattern = "packages:", value = TRUE) |> gsub(pattern = "package:", replacement = "") |> print()
-unused.packages <- packageload[!(packageload %in% used.packages)] |> print()
+  # used.packages <- used.functions |> names() |> grep(pattern = "packages:", value = TRUE) |> gsub(pattern = "package:", replacement = "") |> print()
+  # unused.packages <- packageload[!(packageload %in% used.packages)] |> print()
 
 
 ######################################
@@ -81,7 +81,6 @@ train[train$WHOIS_COUNTRY == "[u'GB'; u'UK']",'WHOIS_COUNTRY'] <- "UK"
 train[train$WHOIS_COUNTRY == "GB",'WHOIS_COUNTRY'] <- "UK"
 train[train$WHOIS_COUNTRY == "us",'WHOIS_COUNTRY'] <- "US"
 train[train$WHOIS_COUNTRY == 'ru','WHOIS_COUNTRY'] <- "RU"
-train$WHOIS_COUNTRY <- as.character(train$WHOIS_COUNTRY)
 
 # Most countries don't seem to have any malicious data 
 # This didn't seem to improve classification but might help performance by reducing dimensionality
@@ -117,8 +116,8 @@ train$SERVER <- as.factor(train$SERVER)
 # For the variables with NA values, we'll impute different values. 
 colSums(is.na(train))
 
+# Resolving two columns through imputation.
 train$DNS_QUERY_TIMES=impute(train$DNS_QUERY_TIMES, 0)
-
 train$CONTENT_LENGTH=impute(train$CONTENT_LENGTH, mean)
 
 # Removing variables that will not be useful in the modelling process.
@@ -143,9 +142,6 @@ tail(train, 10)
 
 # Shows the structure of the R object and other details.
 str(train)
-
-#Displays column and row names for further clarity.
-colnames(train)
 
 # Used instead of summary(train) due to its provision of extra statistical details such as mean, median and variance.
 describe(train)
