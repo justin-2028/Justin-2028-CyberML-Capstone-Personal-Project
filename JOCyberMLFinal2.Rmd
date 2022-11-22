@@ -60,7 +60,7 @@ library(NCmisc)
 
 ```
 
-Now'll download the data-set from GitHub repository and load it into RStudio: 
+Now, we will download the dataset from my GitHub repository and load it into RStudio: 
 
 ```{r,message=F,warning=F}
 # The necessary data-set is able through my Github repository if the following code fails
@@ -72,44 +72,44 @@ We'll move on to first stage of the analysis process, which is data cleaning.
 
 # Data Description
 
-URL: it is the anonymous identification of the URL analyzed in the study
+URL: It is the anonymous identification of the URL analyzed in the study.
 
-URL_LENGTH: it is the number of characters in the URL
+URL_LENGTH: It is the number of characters in the URL.
 
-NUMBERSPECIALCHARACTERS: it is number of special characters identified in the URL, such as, “/”, “%”, “#”, “&”, “. 
-“, “=”
+NUMBERSPECIALCHARACTERS: It is the number of special characters identified in the URL, such as, “/”, “%”, “#”, “&”, “. 
+“, “=”.
 
-CHARSET: it is a categorical value and its meaning is the character encoding standard (also called character set).
+CHARSET: It is a categorical value and represents the character encoding standard (also called character set).
 
-SERVER: it is a categorical value and its meaning is the operative system of the server got from the packet response.
+SERVER: It is a categorical value and represents the operative system of the server that has been derived from the packet response.
 
-CONTENT_LENGTH: it represents the content size of the HTTP header.
+CONTENT_LENGTH: It represents the content size of the HTTP header.
 
-WHOIS_COUNTRY: it is a categorical variable, its values are the countries we got from the server response (specifically, our script used the API of Whois).
+WHOIS_COUNTRY: It is a categorical variable, and its values are the countries we got from the server response (specifically, through the API of WHOIS).
 
-WHOIS_STATEPRO: it is a categorical variable, its values are the states we got from the server response (specifically, our script used the API of Whois).
+WHOIS_STATEPRO: It is a categorical variable, and its values are the states we got from the server response (specifically, through the API of WHOIS).
 
-WHOIS_REGDATE: Whois provides the server registration date, so, this variable has date values with format DD/MM/YYY HH:MM
+WHOIS_REGDATE: WHOIS provides the server registration date, so, this variable has date values with the format DD/MM/YYY HH:MM.
 
-WHOISUPDATEDDATE: Through the Whois we got the last update date from the server analyzed
+WHOISUPDATEDDATE: Through the WHOIS, the last update date from the server is represented through this variable.
 
-TCPCONVERSATIONEXCHANGE: This variable is the number of TCP packets exchanged between the server and our honeypot client
+TCPCONVERSATIONEXCHANGE: This variable is the number of TCP packets exchanged between the server and the honeypot client.
 
-DISTREMOTETCP_PORT: it is the number of the ports detected and different to TCP
+DISTREMOTETCP_PORT: It is the number of the ports detected and unique to TCP.
 
-REMOTE_IPS: this variable has the total number of IPs connected to the honeypot
+REMOTE_IPS: This variable represents the total number of IPs connected to the honeypot.
 
-APP_BYTES: this is the number of bytes transferred
+APP_BYTES: This is the number of bytes transferred.
 
-SOURCEAPPPACKETS: packets sent from the honeypot to the server
+SOURCEAPPPACKETS: This is the number of packets sent from the honeypot to the server.
 
-REMOTEAPPPACKETS: packets received from the server
+REMOTEAPPPACKETS: This is the number of packets received from the server.
 
-APP_PACKETS: this is the total number of IP packets generated during the communication between the honeypot and the server
+APP_PACKETS: This is the total number of IP packets generated during the communication between the honeypot and the server.
 
-DNSQUERYTIMES: this is the number of DNS packets generated during the communication between the honeypot and the server
+DNSQUERYTIMES: This is the number of DNS packets generated during the communication between the honeypot and the server.
 
-TYPE: this is a categorical variable, its values represent the type of web page analyzed, specifically, 1 is for malicious websites and 0 is for benign websites
+TYPE: This is a categorical variable, and its values represent the type of web page analyzed, specifically, 1 is for malicious websites and 0 is for benign websites.
 
 
 # Data Cleaning:
