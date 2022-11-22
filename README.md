@@ -15,5 +15,5 @@ As the instructions necessitate, the following three files are attached: <br />
 
 ### c. Timeline of the Project
 10/8/22 - Start Date <br />
-/22 - Completion of Rmd and RScript <br />
-/22 - End Date <br />
+11/20/22 - Completion of Rmd and RScript <br />
+11/22/22 - End Date <br />
