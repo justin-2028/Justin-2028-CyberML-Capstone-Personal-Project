@@ -103,9 +103,7 @@ train[train$CHARSET == 'utf-8',"CHARSET"] <- "UTF-8"
 train[train$CHARSET == 'windows-1251',"CHARSET"] <- "windows-12##"
 train[train$CHARSET == 'windows-1252',"CHARSET"] <- "windows-12##"
 train$CHARSET <- as.factor(train$CHARSET)
-summary(train$CHARSET)
 
-unique(train$SERVER)
 # For the normalization of the SERVER variable, we will assign the values which do not have any malicious value in the data to the "Other" server value.
 
 train$SERVER <- as.character(train$SERVER)
@@ -119,20 +117,16 @@ train$SERVER <- as.factor(train$SERVER)
 # For the variables with NA values, we'll impute different values. 
 colSums(is.na(train))
 
-
 train$DNS_QUERY_TIMES=impute(train$DNS_QUERY_TIMES, 0)
 
 train$CONTENT_LENGTH=impute(train$CONTENT_LENGTH, mean)
 
-train$type<- as.factor(train$Type)
-
-
+# Removing variables that will not be useful in the modelling process.
 train$URL <- NULL
 train$WHOIS_REGDATE <- NULL
-
 train$CONTENT_LENGTH <- NULL
-train$REMOTE_IPS <- NULL
 
+train$type<- as.factor(train$Type)
 
 ######################################
 # Data Exploration
@@ -322,5 +316,3 @@ modelrf <- randomForest(Type ~ ., data=train.data,ntree=1000)
 test.data$rf.pred <- predict(modelrf, newdata = test.data)
 head(test.data[c("Type","rf.pred")], n=10)
 confusionMatrix(as.factor(test.data$Type),as.factor(test.data$rf.pred))
-
-(cm1 <- with(test.data,table(rf.pred,Type)))
