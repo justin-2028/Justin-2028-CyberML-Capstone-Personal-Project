@@ -48,12 +48,12 @@ lapply(packageload, library, character.only = TRUE)
 
 # Finding the functions in which the packages listed are used. Please ignore the absolute path featured as this code is used only for my own reference.
 
-used.functions <- NCmisc::list.functions.in.file(filename = "C:/Users/124Oh/Downloads/JOCyberMLFinal.R", alphabetic = FALSE) |> print()
+  # used.functions <- NCmisc::list.functions.in.file(filename = "C:/Users/124Oh/Downloads/JOCyberMLFinal.R", alphabetic = FALSE) |> print()
 
 # Finding what packages are unused entirely.
 
-used.packages <- used.functions |> names() |> grep(pattern = "packages:", value = TRUE) |> gsub(pattern = "package:", replacement = "") |> print()
-unused.packages <- packageload[!(packageload %in% used.packages)] |> print()
+  # used.packages <- used.functions |> names() |> grep(pattern = "packages:", value = TRUE) |> gsub(pattern = "package:", replacement = "") |> print()
+  # unused.packages <- packageload[!(packageload %in% used.packages)] |> print()
 
 
 ######################################
@@ -81,7 +81,6 @@ train[train$WHOIS_COUNTRY == "[u'GB'; u'UK']",'WHOIS_COUNTRY'] <- "UK"
 train[train$WHOIS_COUNTRY == "GB",'WHOIS_COUNTRY'] <- "UK"
 train[train$WHOIS_COUNTRY == "us",'WHOIS_COUNTRY'] <- "US"
 train[train$WHOIS_COUNTRY == 'ru','WHOIS_COUNTRY'] <- "RU"
-train$WHOIS_COUNTRY <- as.character(train$WHOIS_COUNTRY)
 
 # Most countries don't seem to have any malicious data 
 # This didn't seem to improve classification but might help performance by reducing dimensionality
@@ -117,8 +116,8 @@ train$SERVER <- as.factor(train$SERVER)
 # For the variables with NA values, we'll impute different values. 
 colSums(is.na(train))
 
+# Resolving two columns through imputation.
 train$DNS_QUERY_TIMES=impute(train$DNS_QUERY_TIMES, 0)
-
 train$CONTENT_LENGTH=impute(train$CONTENT_LENGTH, mean)
 
 # Removing variables that will not be useful in the modelling process.
@@ -144,18 +143,8 @@ tail(train, 10)
 # Shows the structure of the R object and other details.
 str(train)
 
-#Displays column and row names for further clarity.
-colnames(train)
-
-# Used instead of summary(train) due to its provision of extra statistical details.
+# Used instead of summary(train) due to its provision of extra statistical details such as mean, median and variance.
 describe(train)
-
-# Checks for any missing (NA) values in the dataset.
-sum(is.na(train))
-
-# Since there are a substantial amount of NA values, we will use colSums to see which columns contain the majority of the NA values.
-colSums(is.na(train))
-
 
 # Let's plot DNS_QUERY_TIMES with target variables. 
 ggplot(train, aes(x=as.factor(Type), y=DNS_QUERY_TIMES, fill=as.factor(Type))) + 
@@ -190,15 +179,6 @@ train%>%ggplot(aes(x=as.factor(Type), y=REMOTE_IPS, fill=as.factor(Type))) +
   xlab('Type')+ylab('Remote IPS')+
   theme(plot.title = element_text(hjust = 0.5))
 
-# Plotting the distribution of all the numeric variables in the data. 
-train %>%
-  keep(is.numeric) %>% 
-  gather() %>% 
-  ggplot(aes(value)) +
-  facet_wrap(~ key, scales = "free") +
-  geom_histogram()
-
-
 # Determining if URL_LENGTH is a good predictor for the type of URL link. 
 train%>%ggplot(aes(x=as.factor(Type), y=URL_LENGTH, fill=as.factor(Type))) + 
   geom_boxplot() +
@@ -207,6 +187,13 @@ train%>%ggplot(aes(x=as.factor(Type), y=URL_LENGTH, fill=as.factor(Type))) +
   xlab('Type')+ylab('URL Length')+
   theme(plot.title = element_text(hjust = 0.5))
 
+# Plotting the distribution of all the numeric variables in the data to examine patterns.
+train %>%
+  keep(is.numeric) %>% 
+  gather() %>% 
+  ggplot(aes(value)) +
+  facet_wrap(~ key, scales = "free") +
+  geom_histogram()
 
 ######################################
 # Creating the training and test datasets
@@ -236,8 +223,6 @@ train.data_labels <- train.subset[-test_index,9]
 #view(train.data_labels)
 #view(test.data_labels)
 
-
-
 ######################################
 # Modeling
 ######################################
@@ -261,31 +246,7 @@ confusionMatrix(predictions,as.factor(test.data_labels))
 # KNN
 #
 
-#Find the number of observation
-NROW(train.data_labels) 
-
-# Number of observations: 1425
-# The root of 1425 is approximately 37.75, so two KNN models will be made with 37 and 38.
-
-knn.37 <- knn(train=train.data, test=test.data, cl=train.data_labels, k=37)
-knn.38 <- knn(train=train.data, test=test.data, cl=train.data_labels, k=38)
-
-# Calculate the proportion of correct classification for k = 26, 27
-accuracy.37 <- 100 * sum(test.data_labels == knn.37)/NROW(test.data_labels)
-accuracy.38 <- 100 * sum(test.data_labels == knn.38)/NROW(test.data_labels)
-
-accuracy.37
-
-accuracy.38
-
-# Check prediction against actual value in tabular form for k=37
-table(knn.37,test.data_labels)
-
-# Check prediction against actual value in tabular form for k=38
-table(knn.38,test.data_labels)
-
-confusionMatrix(table(knn.37,test.data_labels))
-confusionMatrix(table(knn.38,test.data_labels))
+# Running loop for KNN from 1 to 100 to test for a value of K that gives highest accuracy.
 
 i=1                          # declaration to initiate for loop
 k.optm=1                     # declaration to initiate for loop
@@ -296,9 +257,10 @@ for (i in 1:100){
   cat(k,'=',k.optm[i],'\n')       # to print % accuracy 
 }
 
+# Plots accuracy against value of K.
 plot(k.optm, type="b", xlab="K- Value",ylab="Accuracy level")
 
-
+# Fitting the KNN model for the value of K = 17.
 knn.17 <- knn(train=train.data, test=test.data, cl=train.data_labels, k=17)
 accuracy.17 <- 100 * sum(test.data_labels == knn.17)/NROW(test.data_labels)
 confusionMatrix(knn.17, as.factor(test.data_labels))
