@@ -8,52 +8,52 @@
 # Preparing for the Dataset
 ######################################
 
-  # Required packages will install, please allow several minutes to complete.
-  
-  if(!require(tidyverse)) install.packages("tidyverse", repos = "http://cran.us.r-project.org")
-  if(!require(purrr)) install.packages("purrr", repos = "http://cran.us.r-project.org")
-  if(!require(caret)) install.packages("caret", repos = "http://cran.us.r-project.org")
-  if(!require(Hmisc)) install.packages("Hmisc", repos = "http://cran.us.r-project.org")
-  if(!require(forecast)) install.packages("forecast", repos = "http://cran.us.r-project.org")
-  if(!require(randomForest)) install.packages("randomForest", repos = "http://cran.us.r-project.org")
-  if(!require(class)) install.packages("class", repos = "http://cran.us.r-project.org")
-  if(!require(data.table)) install.packages("data.table", repos = "http://cran.us.r-project.org")
-  if(!require(psych)) install.packages("psych", repos = "http://cran.us.r-project.org")
-  if(!require(readr)) install.packages("readr", repos = "http://cran.us.r-project.org")
-  if(!require(dplyr)) install.packages("dplyr", repos = "http://cran.us.r-project.org")
-  if(!require(NCmisc)) install.packages("NCmisc", repos = "http://cran.us.r-project.org")
-  
-  # Packages for graphing and modeling
-  library(tidyverse)
-  library(purrr)
-  library(caret)
-  library(Hmisc)
-  library(forecast)
-  library(randomForest)
-  library(class)
-  library(data.table)
-  # Packages for reading the CSV file:
-  library(psych)
-  library(readr)
-  library(dplyr)
-  #Packages for testing what packages are used:
-  library(NCmisc)
-  
-  
-  # Loading packages listed:
-  
-  packageload <- c("tidyverse", "caret", "data.table", "psych", "readr", "dplyr")
-  lapply(packageload, library, character.only = TRUE)
+# Required packages will install, please allow several minutes to complete.
+
+if(!require(tidyverse)) install.packages("tidyverse", repos = "http://cran.us.r-project.org")
+if(!require(purrr)) install.packages("purrr", repos = "http://cran.us.r-project.org")
+if(!require(caret)) install.packages("caret", repos = "http://cran.us.r-project.org")
+if(!require(Hmisc)) install.packages("Hmisc", repos = "http://cran.us.r-project.org")
+if(!require(forecast)) install.packages("forecast", repos = "http://cran.us.r-project.org")
+if(!require(randomForest)) install.packages("randomForest", repos = "http://cran.us.r-project.org")
+if(!require(class)) install.packages("class", repos = "http://cran.us.r-project.org")
+if(!require(data.table)) install.packages("data.table", repos = "http://cran.us.r-project.org")
+if(!require(psych)) install.packages("psych", repos = "http://cran.us.r-project.org")
+if(!require(readr)) install.packages("readr", repos = "http://cran.us.r-project.org")
+if(!require(dplyr)) install.packages("dplyr", repos = "http://cran.us.r-project.org")
+if(!require(NCmisc)) install.packages("NCmisc", repos = "http://cran.us.r-project.org")
+
+# Packages for graphing and modeling
+library(tidyverse)
+library(purrr)
+library(caret)
+library(Hmisc)
+library(forecast)
+library(randomForest)
+library(class)
+library(data.table)
+# Packages for reading the CSV file:
+library(psych)
+library(readr)
+library(dplyr)
+#Packages for testing what packages are used:
+library(NCmisc)
 
 
-    # Finding the functions in which the packages listed are used. Please ignore the absolute path featured as this code is used only for my own reference.
+# Loading packages listed:
 
-    used.functions <- NCmisc::list.functions.in.file(filename = "C:/Users/124Oh/Downloads/JOCyberMLFinal.R", alphabetic = FALSE) |> print()
+packageload <- c("tidyverse", "caret", "data.table", "psych", "readr", "dplyr")
+lapply(packageload, library, character.only = TRUE)
 
-    # Finding what packages are unused entirely.
 
-    used.packages <- used.functions |> names() |> grep(pattern = "packages:", value = TRUE) |> gsub(pattern = "package:", replacement = "") |> print()
-    unused.packages <- packageload[!(packageload %in% used.packages)] |> print()
+# Finding the functions in which the packages listed are used. Please ignore the absolute path featured as this code is used only for my own reference.
+
+used.functions <- NCmisc::list.functions.in.file(filename = "C:/Users/124Oh/Downloads/JOCyberMLFinal.R", alphabetic = FALSE) |> print()
+
+# Finding what packages are unused entirely.
+
+used.packages <- used.functions |> names() |> grep(pattern = "packages:", value = TRUE) |> gsub(pattern = "package:", replacement = "") |> print()
+unused.packages <- packageload[!(packageload %in% used.packages)] |> print()
 
 
 ######################################
